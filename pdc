@@ -1,0 +1,3 @@
+#!/bin/bash
+rdesktop -g 1300x750 -k es 192.1.1.2 -u administrador -d tymdirect  -a 16 -z -x 0x8F -P -r disk:jgalvez=/home/jgalvez
+

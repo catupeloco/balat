@@ -1,0 +1,86 @@
+#!/bin/bash
+mkdir /home/soporte  2>/dev/null >/dev/null
+
+echo - Favoritos
+cd /etc/skel/.mozilla/firefox/wgnppejp.default/
+wget -N https://balat.com.ar/debian/inbound/places.sqlite 2>/dev/null >/dev/null
+cd /home/soporte
+wget -N https://balat.com.ar/debian/inbound/becas.tar.gz 2>/dev/null >/dev/null 
+wget -N https://balat.com.ar/debian/inbound/todoin.tar.gz 2>/dev/null >/dev/null 
+wget -N https://balat.com.ar/debian/vocal/fullvocal.tar.gz  2>/dev/null >/dev/null
+wget -N https://balat.com.ar/debian/vocal/rutavocal  2>/dev/null >/dev/null
+rm balat 2>/dev/null >/dev/null
+wget -N https://balat.com.ar/debian/balat 2>/dev/null >/dev/null
+chmod +x /home/soporte/balat 2>/dev/null >/dev/null
+chmod +x /home/soporte/rutavocal
+
+
+cd /
+tar xzvf /home/soporte/becas.tar.gz 2>/dev/null >/dev/null
+tar xzvf /home/soporte/todoin.tar.gz 2>/dev/null >/dev/null
+cd /etc/skel
+tar xzvf /home/soporte/fullvocal.tar.gz   2>/dev/null >/dev/null
+chmod 777 -R /etc/skel/.mozilla_*
+chown root:root -R /etc/skel/.mozilla_*
+
+
+echo - Autostartup, configurar
+cd /etc/skel/.config/autostart/
+rm balat.desktop 2>/dev/null >/dev/null
+wget -N https://balat.com.ar/debian/configurar.desktop 2>/dev/null >/dev/null
+
+echo - Escritorio: Configurar, Telefono, Audacity
+cd /etc/skel/Escritorio
+rm balat.desktop 2>/dev/null >/dev/null
+wget -N https://balat.com.ar/debian/configurar.desktop 2>/dev/null >/dev/null
+wget -N https://balat.com.ar/debian/telefono.desktop 2>/dev/null >/dev/null
+wget -N https://balat.com.ar/debian/audacity.desktop 2>/dev/null >/dev/null
+wget -N https://balat.com.ar/debian/vocal/vocalcom.desktop  2>/dev/null >/dev/null
+
+echo - Ruta vocalcom
+cd /etc/systemd/system/
+wget -N https://balat.com.ar/debian/vocal/rutavocal.service  2>/dev/null >/dev/null
+chmod +x rutavocal.service
+
+systemctl enable rutavocal.service  2>/dev/null >/dev/null
+systemctl start rutavocal.service  2>/dev/null >/dev/null
+
+
+echo - Bomgar
+cd /home
+wget -N https://balat.com.ar/debian/inbound/bomgar.tar.gz 2>/dev/null >/dev/null
+cd /
+tar xzvf /home/bomgar.tar.gz 2>/dev/null >/dev/null
+
+echo - Cambianombre
+cd /usr/local/bin/ 2>/dev/null >/dev/null
+wget -N https://balat.com.ar/debian/vocalcom/fullvocal 2>/dev/null >/dev/null
+chmod +x /usr/local/bin/fullvocal 2>/dev/null >/dev/null
+wget -N https://balat.com.ar/debian/cambionombrepc 2>/dev/null >/dev/null
+chmod +x /usr/local/bin/cambionombrepc 2>/dev/null >/dev/null
+
+echo - Disketera
+rm /home/soporte/chaufloppy 2>/dev/null >/dev/null
+cat <<EOT >> /home/soporte/chaufloppy
+lsmod | grep -i floppy
+rmmod floppy
+echo "blacklist floppy" > /etc/modprobe.d/blacklistfloppy.conf
+cp /boot/initrd.img-$(uname -r) /boot/initrd.img-$(uname -r).backup
+update-initramfs -u
+reboot
+EOT
+chmod +x /home/soporte/chaufloppy
+
+echo - Agregando comando todo
+echo wget -qO- https://balat.com.ar/debian/todo \| bash  > /usr/local/bin/todo
+chmod +x /usr/local/bin/todo 2>/dev/null >/dev/null
+
+rm -R /etc/skel/.mozilla_todoin/firefox/75edexgo.default 2>/dev/null >/dev/null
+rm -R /etc/skel/.mozilla_todoin/firefox/lmd3ccyv.default 2>/dev/null >/dev/null
+
+chmod +x -R /etc/skel 2>/dev/null >/dev/null
+chmod +r -R /etc/skel 2>/dev/null >/dev/null
+
+
+
+exit 22

@@ -1,0 +1,10 @@
+#!/bin/bash
+sudo /home/soporte/rutavocal
+vpn_admin
+/home/jgalvez/montar
+sudo rsync -av /home/jgalvez/Escritorio/z_admin/ /home/backup/z_admin/
+sudo rsync -av /home/jgalvez/Escritorio/Z/ /home/backup/z_operaciones/
+sudo rsync -av /home/jgalvez/Escritorio/bejerman/ /home/backup/bejerman/
+ssh soporte@192.1.3.10 sudo /home/soporte/backup.sh
+ssh root@192.1.0.1 -p 2022 /root/backup.sh
+sudo tar czvf /home/backup/sistemas220317.tar.gz --exclude=/home --exclude=/proc /

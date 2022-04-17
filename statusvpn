@@ -1,0 +1,6 @@
+echo enablevpn diga usuario
+read usuario
+ssh jgalvez@192.1.5.190 /ppp secret print | grep $usuario
+ssh jgalvez@192.1.5.191 /ppp secret print | grep $usuario
+ssh jgalvez@192.1.5.192 /ppp secret print | grep $usuario
+ssh jgalvez@192.1.5.193 /ppp secret print | grep $usuario

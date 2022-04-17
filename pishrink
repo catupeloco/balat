@@ -1,0 +1,5 @@
+#!/bin/bash
+ls -lah /home/jgalvez/Escritorio/raspi
+echo --Escriba file
+read FileName
+sudo /home/jgalvez/pishrink.sh /home/jgalvez/Escritorio/raspi/$FileName

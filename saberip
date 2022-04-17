@@ -1,0 +1,7 @@
+#!/bin/bash
+for ip_top in $( fping -g 192.1.253.0 192.1.254.254 2> /dev/null | grep alive | cut -d ' ' -f1)
+do
+# echo ip=$ip_top
+ssh-copy-id root@$ip_top 2>/dev/null
+ssh root@$ip_top 'cat /etc/hostname 2>/dev/null &&  hostname -I' 2>/dev/null
+done

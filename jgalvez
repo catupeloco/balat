@@ -1,0 +1,163 @@
+#!/bin/bash
+sudo apt-get remove lxplug-ptbatt -y  >/dev/null 2>/dev/null
+clear
+LISTAAPPS=
+################Instalando apps si hace falta###########################
+ if [ ! -e /usr/bin/rdesktop ]
+    then
+     LISTAAPPS="$LISTAAPPS "rdesktop
+ fi
+
+ if [ ! -e /usr/bin/xfreerdp ]
+    then
+     LISTAAPPS="$LISTAAPPS "freerdp2-x11
+ fi
+
+ if [ ! -e /usr/bin/fping ]
+    then
+     LISTAAPPS="$LISTAAPPS "fping
+ fi
+
+ if [ ! -e /usr/bin/numlockx ]
+   then
+    LISTAAPPS="$LISTAAPPS "numlockx
+ fi
+
+ if [ ! -z "$LISTAAPPS" ] 
+   then
+    echo - Por app faltantes $LISTAAPPS, actualizamos repositorios
+    sudo apt-get update >/dev/null 2>/dev/null
+    echo - Instalando apps faltantes: $LISTAAPPS
+    sudo apt-get install -y --force-yes $LISTAAPPS >/dev/null 2>/dev/null
+ fi
+
+######################################################################
+echo - Asignando permisos
+ sudo chmod 777 /usr/local/bin/
+ sudo chmod 777 -R /home/pi/Desktop/
+ sudo chmod 777 -R /usr/share/raspi-ui-overrides/applications/
+
+########################################################################
+echo - Agregando icono jgalvez
+ ARCHIVO=/usr/local/bin/jgalvez
+ echo "#!/bin/bash" > $ARCHIVO
+ echo "bash <(curl -s https://balat.com.ar/raspi/jgalvez)" >> $ARCHIVO
+ chmod +x $ARCHIVO
+
+######################################################################
+echo - Montando carpetas RW
+ sudo mkdir /home/drive 2>/dev/null >/dev/null
+ sudo mkdir /home/jgalvez 2>/dev/null >/dev/null
+ sudo mkdir /home/javier 2>/dev/null >/dev/null
+ sudo chown pi:pi /home/drive /home/jgalvez /home/javier
+ echo --Escriba clave:
+ read password
+ fping -g 192.168.0.100 192.168.0.200 2>/dev/null >/dev/null 
+ 
+ corei5=$(ip neighbor | grep 00:19:d1:70:03:88 | cut -d" " -f1)
+
+ sudo umount /home/drive 2>/dev/null >/dev/null
+ sudo umount /home/jgalvez 2>/dev/null >/dev/null
+ sudo umount /home/javier 2>/dev/null >/dev/null
+ sudo umount /home/drive 2>/dev/null >/dev/null
+ sudo umount /home/jgalvez 2>/dev/null >/dev/null
+ sudo umount /home/javier 2>/dev/null >/dev/null
+ sudo mount -t cifs -o username=jgalvez,password=$password,uid=pi,gid=pi,forceuid,forcegid,vers=2.0 //$corei5/Drive /home/drive/
+ sudo mount -t cifs -o username=jgalvez,password=$password,uid=pi,gid=pi,forceuid,forcegid,vers=2.0 //$corei5/jgalvez /home/jgalvez/
+ sudo mount -t cifs -o username=jgalvez,password=$password,uid=pi,gid=pi,forceuid,forcegid,vers=2.0 //$corei5/javier /home/javier
+
+
+######################################################################
+echo --- Creando script de inicio \(numlock on\)
+ ARCHIVO=/usr/local/bin/inicialmentejgalvez
+ sudo chmod 777 $ARCHIVO > /dev/null 2> /dev/null
+ echo "fping -g 192.168.0.100 192.168.0.200 2>/dev/null >/dev/null" > $ARCHIVO
+ echo "corei5=\$(ip neighbor | grep 00:19:d1:70:03:88 | cut -d\" \" -f1)" >> $ARCHIVO
+ echo "sudo umount /home/drive 2>/dev/null >/dev/null" >> $ARCHIVO
+ echo "sudo umount /home/jgalvez 2>/dev/null >/dev/null" >> $ARCHIVO
+ echo "sudo umount /home/javier 2>/dev/null >/dev/null" >> $ARCHIVO
+ echo "sudo umount /home/drive 2>/dev/null >/dev/null" >> $ARCHIVO
+ echo "sudo umount /home/jgalvez 2>/dev/null >/dev/null" >> $ARCHIVO
+ echo "sudo umount /home/javier 2>/dev/null >/dev/null" >> $ARCHIVO
+ echo "sudo mount -t cifs -o username=jgalvez,password=$password,uid=pi,gid=pi,forceuid,forcegid,vers=2.0 //\$corei5/Drive /home/drive/" >> $ARCHIVO
+ echo "sudo mount -t cifs -o username=jgalvez,password=$password,uid=pi,gid=pi,forceuid,forcegid,vers=2.0 //\$corei5/jgalvez /home/jgalvez/" >> $ARCHIVO
+ echo "sudo mount -t cifs -o username=jgalvez,password=$password,uid=pi,gid=pi,forceuid,forcegid,vers=2.0 //\$corei5/javier /home/javier/" >> $ARCHIVO
+ sudo chmod +x $ARCHIVO
+
+echo --- Configurando auto inicio del script anterior
+ grep inicialmentejgalvez /home/pi/.config/lxsession/LXDE-pi/autostart >/dev/null 2>/dev/null
+ if [ $? == 1 ]; then
+  echo "@/usr/local/bin/inicialmentejgalvez" >>/home/pi/.config/lxsession/LXDE-pi/autostart
+ else
+  echo ----No hace falta ya fue aplicado 2>/dev/null >/dev/null
+ fi
+
+########################################################################
+echo - Agregando icono corei5
+ ARCHIVO=/usr/local/bin/corei5
+ echo "#!/bin/bash" > $ARCHIVO
+ echo fping -g 192.168.0.100 192.168.0.200 \2\>\/dev\/null \>\/dev\/null >> $ARCHIVO
+ #echo "rdesktop -f -k es \$(ip neighbor | grep 00:19:d1:70:03:88 | cut -d\" \" -f1) -u jgalvez -d corei5 -p $password" >> $ARCHIVO
+ echo "xfreerdp /multimon /u:jgalvez /p:$password /v:\$(ip neighbor | grep 00:19:d1:70:03:88 | cut -d\" \" -f1) /sound /network:modem /bpp:8 /compression -themes -wallpaper -glyph-cache  /gdi:hw" >> $ARCHIVO
+ chmod +x $ARCHIVO
+
+echo - Agregando icono corei51
+ ARCHIVO=/usr/local/bin/corei51
+ echo "#!/bin/bash" > $ARCHIVO
+ echo fping -g 192.168.0.100 192.168.0.200 \2\>\/dev\/null \>\/dev\/null >> $ARCHIVO
+ echo "rdesktop -g 1280x960 -k es \$(ip neighbor | grep 00:19:d1:70:03:88 | cut -d\" \" -f1) -u jgalvez -d corei5 -p $password" >> $ARCHIVO
+ chmod +x $ARCHIVO
+
+echo - Agregando icono vieja
+ ARCHIVO=/usr/local/bin/vieja
+ echo "#!/bin/bash" > $ARCHIVO
+ echo fping -g 192.168.0.100 192.168.0.200 \2\>\/dev\/null \>\/dev\/null >> $ARCHIVO
+ echo "rdesktop -g 1280x960 -k es \$(ip neighbor | grep 88:96:76:48:70:31 | cut -d\" \" -f1) -u jgalvez -d vieja -p $password" >> $ARCHIVO
+ chmod +x $ARCHIVO
+
+echo - Agregando icono hidalgo
+ ARCHIVO=/usr/local/bin/hidalgo
+ echo "#!/bin/bash" > $ARCHIVO
+ echo fping -g 192.168.0.100 192.168.0.200 \2\>\/dev\/null \>\/dev\/null >> $ARCHIVO
+ echo "rdesktop -g 1280x960 -k es \$(ip neighbor | grep 00:19:d1:70:03:88 | cut -d\" \" -f1) -u jgalvez -d vieja -p $password" >> $ARCHIVO
+ chmod +x $ARCHIVO
+
+
+
+########################################################################
+echo - Agregando comando pishrink
+ ARCHIVO=/usr/local/bin/pishrink
+ echo "#!/bin/bash" > $ARCHIVO
+ echo 'sudo mkdir /home/javier 2>/dev/null >/dev/null' >> $ARCHIVO
+ echo 'sudo chown pi:pi /home/javier 2>/dev/null >/dev/null' >> $ARCHIVO
+
+ echo 'echo --Escriba clave:' >> $ARCHIVO
+ echo 'read password' >> $ARCHIVO
+ echo fping -g 192.168.0.100 192.168.0.200 \2\>\/dev\/null \>\/dev\/null >> $ARCHIVO
+ echo 'DirIP=$(ip neighbor | grep 00:19:d1:70:03:88 | cut -d" " -f1)' >> $ARCHIVO
+
+ echo 'sudo umount /home/javier 2>/dev/null >/dev/null' >> $ARCHIVO
+ echo 'sudo umount /home/javier 2>/dev/null >/dev/null' >> $ARCHIVO
+ echo 'sudo mount -t cifs -o username=jgalvez,password=$password,uid=pi,gid=pi,forceuid,forcegid,vers=2.0 //$DirIP/javier /home/javier/' >> $ARCHIVO
+
+ echo 'ls -lah /home/javier' >> $ARCHIVO
+ echo 'echo --Escriba file' >> $ARCHIVO
+ echo 'read FileName' >> $ARCHIVO
+ echo 'sudo /usr/local/bin/pishrink.sh /home/javier/$FileName' >> $ARCHIVO
+
+ wget https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh -O /usr/local/bin/pishrink.sh  2>/dev/null >/dev/null
+ chmod +x /usr/local/bin/pishrink.sh
+ chmod +x $ARCHIVO
+
+ wget https://balat.com.ar/raspi/vpn_admin -O /usr/local/bin/vpn_admin  2>/dev/null >/dev/null
+ chmod +x /usr/local/bin/vpn_admin
+
+########################################################################
+echo - Volviendo permisos a su lugar
+ sudo chmod 775 /usr/local/bin/ 2>/dev/null
+ sudo chmod 500 -R /home/pi/Desktop 2>/dev/null
+ sudo chmod 755 -R /usr/share/raspi-ui-overrides/applications/
+
+########################################################################
+echo Listo ya puede cerrar la ventana
+read fin
