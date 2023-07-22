@@ -1,9 +1,9 @@
 #!/bin/bash
 echo pbx1
-ssh root@192.1.2.221  "tail /var/log/asterisk/full | grep Wrong && asterisk -rx 'sip reload'"
+ssh root@pbx1  "tail /var/log/asterisk/full | grep Wrong && asterisk -rx 'sip reload'"
 echo pbx2
-ssh root@192.1.2.220  "tail /var/log/asterisk/full | grep Wrong && asterisk -rx 'sip reload'"
+ssh root@pbx2  "tail /var/log/asterisk/full | grep Wrong && asterisk -rx 'sip reload'"
 echo pbx3
-ssh root@192.1.2.223  "tail /var/log/asterisk/full | grep Wrong && asterisk -rx 'sip reload'"
+ssh root@pbx3  "tail /var/log/asterisk/full | grep Wrong && asterisk -rx 'sip reload'"
 echo pbx4
-ssh root@192.1.2.223  "tail /var/log/asterisk/full | grep Wrong && asterisk -rx 'sip reload'"
+ssh root@pbx4  "tail /var/log/asterisk/full | grep Wrong && asterisk -rx 'sip reload'"
