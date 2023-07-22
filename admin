@@ -1,3 +1,0 @@
-#!/bin/bash
-sudo vpn_admin
-rdesktop -k es -f -u administrador -d tym 192.168.88.3
