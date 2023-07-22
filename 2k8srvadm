@@ -1,2 +1,0 @@
-#!/bin/bash
-rdesktop -g 1024x768 -k es 192.168.88.3 -u administrador -d tym
