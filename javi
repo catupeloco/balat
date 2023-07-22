@@ -1,2 +1,0 @@
-#!/bin/bash
-rdesktop -k es -f -u jgalvez 192.1.2.17
